@@ -2,14 +2,14 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.typesafe.config.Config;
+import handlers.Handler;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.PostResource;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
-import play.mvc.*;
-import handlers.Handler;
-import play.twirl.api.Html;
+import play.mvc.Controller;
+import play.mvc.Result;
 import views.html.post;
 
 /**
@@ -21,6 +21,9 @@ public class HomeController extends Controller {
   private final Config config;
   private Handler handler;
 
+
+  // TODO: 03.02.2019 exception handling for request without content
+  // TODO: 03.02.2019 500 when request for nonexistent post
   @Inject
   public HomeController(HttpExecutionContext ec, Config config, Handler handler) {
     this.ec = ec;
@@ -39,17 +42,29 @@ public class HomeController extends Controller {
   }
 
   public Result hello(String string) {
-
     return ok(views.html.index.render(string));
   }
 
+  // TODO: 03.02.2019 change it, do it really need to return a new page or just updated content?
   public CompletionStage<Result> create() {
-    //JsonNode json = request().body().asJson();
-    final PostResource resource = new PostResource("id_1", "title_s",
-        "body_x");/// Json.fromJson(json, PostResource.class);
-    return handler.create(resource).thenApplyAsync(savedResource -> {
-      Html content = post.render(savedResource);
-      return created(content);
-    }, ec.current());
+    JsonNode json = request().body().asJson();
+    final PostResource resource = Json.fromJson(json, PostResource.class);
+    return handler.create(resource).thenApplyAsync(p -> created(post.render(p)), ec.current());
+  }
+
+  public CompletionStage<Result> show(String id) {
+    return handler.lookup(id).thenApplyAsync(p -> ok(post.render(p)), ec.current());
+  }
+
+  public CompletionStage<Result> remove(String id) {
+    return handler.remove(id)
+        .thenApplyAsync(result -> result ? ok(id + " removed") : badRequest(id), ec.current());
+  }
+
+  // TODO: 03.02.2019  the same question
+  public CompletionStage<Result> update() {
+    JsonNode json = request().body().asJson();
+    final PostResource resource = Json.fromJson(json, PostResource.class);
+    return handler.update(resource).thenApplyAsync(p -> ok(post.render(p)), ec.current());
   }
 }

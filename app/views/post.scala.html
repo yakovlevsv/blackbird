@@ -1,6 +1,6 @@
 @import model.PostResource
 @(pr: PostResource)
-@main("Welcome to Play") {
-  <h1>Welcome to Play @pr.getTitle!</h1>
-  <h1>Welcome to Play @pr.getBody!</h1>
+@main("Posts") {
+<h1>post title: @pr.getTitle!</h1>
+<h1>post body: @pr.getBody!</h1>
 }

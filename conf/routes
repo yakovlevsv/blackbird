@@ -5,7 +5,11 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
 GET     /hello                      controllers.HomeController.hello(name: String)
-GET     /create                      controllers.HomeController.create()
+GET     /show                       controllers.HomeController.show(id: String)
+DELETE  /delete                     controllers.HomeController.remove(id: String)
+POST    /create                     controllers.HomeController.create()
+PUT     /update                     controllers.HomeController.update()
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
+

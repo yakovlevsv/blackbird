@@ -21,8 +21,22 @@ public class Handler {
 
   public CompletionStage<PostResource> create(PostResource resource) {
     final PostData data = new PostData(resource.getTitle(), resource.getBody());
-    return repository.create(data).thenApplyAsync(savedData -> {
-      return new PostResource(savedData);
-    }, ec.current());
+    return repository.create(data)
+        .thenApplyAsync(PostResource::new, ec.current());
+  }
+
+  public CompletionStage<PostResource> lookup(String id) {
+    return repository.get(Long.parseLong(id))
+        .thenApplyAsync(PostResource::new, ec.current());
+  }
+
+  public CompletionStage<Boolean> remove(String id) {
+    return repository.delete(Long.parseLong(id));
+  }
+
+  public CompletionStage<PostResource> update(PostResource resource) {
+    return repository.create(
+        new PostData(Long.parseLong(resource.getId()), resource.getTitle(), resource.getBody()))
+        .thenApplyAsync(PostResource::new, ec.current());
   }
 }

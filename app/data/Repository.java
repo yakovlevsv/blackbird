@@ -1,8 +1,8 @@
 package data;
 
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 import akka.actor.ActorSystem;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 import javax.inject.Inject;
@@ -26,14 +26,22 @@ public class Repository {
   }
 
   public CompletionStage<PostData> create(PostData postData) {
-    return supplyAsync(() -> wrap(em -> insert(em, postData)), ec);
+    return CompletableFuture.supplyAsync(() -> wrap(em -> em.merge(postData)), ec);
   }
 
   private <T> T wrap(Function<EntityManager, T> function) {
     return jpaApi.withTransaction(function);
   }
 
-  private PostData insert(EntityManager em, PostData postData) {
-    return em.merge(postData);
+  public CompletionStage<PostData> get(long id) {
+    return CompletableFuture.supplyAsync(() -> wrap(em -> em.find(PostData.class, id)));
+  }
+
+  public CompletionStage<Boolean> delete(long id) {
+    return CompletableFuture.supplyAsync(() -> wrap(em -> {
+      // TODO: 03.02.2019 exception handling
+      em.remove(em.find(PostData.class, id));
+      return true;
+    }));
   }
 }
