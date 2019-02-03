@@ -9,6 +9,8 @@ import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.*;
 import handlers.Handler;
+import play.twirl.api.Html;
+import views.html.post;
 
 /**
  * This controller contains an action to handle HTTP requests to the application's home page.
@@ -43,9 +45,11 @@ public class HomeController extends Controller {
 
   public CompletionStage<Result> create() {
     //JsonNode json = request().body().asJson();
-    final PostResource resource =new PostResource("id_1", "title_s", "body_x");/// Json.fromJson(json, PostResource.class);
+    final PostResource resource = new PostResource("id_1", "title_s",
+        "body_x");/// Json.fromJson(json, PostResource.class);
     return handler.create(resource).thenApplyAsync(savedResource -> {
-      return created(Json.toJson(savedResource));
+      Html content = post.render(savedResource);
+      return created(content);
     }, ec.current());
   }
 }
