@@ -5,10 +5,12 @@ import akka.actor.ActorSystem;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import model.PostData;
+import model.PostResource;
 import play.db.jpa.JPAApi;
 import play.libs.concurrent.CustomExecutionContext;
 
@@ -34,7 +36,7 @@ public class Repository {
   }
 
   public CompletionStage<PostData> get(long id) {
-    return CompletableFuture.supplyAsync(() -> wrap(em -> em.find(PostData.class, id)));
+    return CompletableFuture.supplyAsync(() -> wrap(em -> em.find(PostData.class, id))); // TODO: 05.02.2019 make it OPTIONAL
   }
 
   public CompletionStage<Boolean> delete(long id) {
@@ -43,5 +45,10 @@ public class Repository {
       em.remove(em.find(PostData.class, id));
       return true;
     }));
+  }
+
+  public CompletionStage<Stream<PostData>> find() {
+    return CompletableFuture.supplyAsync(() -> wrap(
+        em -> em.createQuery("SELECT p FROM PostData p").getResultList().stream()), ec);
   }
 }

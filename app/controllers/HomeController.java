@@ -6,6 +6,8 @@ import handlers.Handler;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.PostResource;
+import play.data.Form;
+import play.data.FormFactory;
 import play.libs.Json;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
@@ -20,15 +22,18 @@ public class HomeController extends Controller {
   private HttpExecutionContext ec;
   private final Config config;
   private Handler handler;
+  private FormFactory formFactory;
 
 
   // TODO: 03.02.2019 exception handling for request without content
   // TODO: 03.02.2019 500 when request for nonexistent post
   @Inject
-  public HomeController(HttpExecutionContext ec, Config config, Handler handler) {
+  public HomeController(HttpExecutionContext ec, Config config, Handler handler,
+      FormFactory formFactory) {
     this.ec = ec;
     this.config = config;
     this.handler = handler;
+    this.formFactory = formFactory;
   }
 
   /**
@@ -45,11 +50,28 @@ public class HomeController extends Controller {
     return ok(views.html.index.render(string));
   }
 
-  // TODO: 03.02.2019 change it, do it really need to return a new page or just updated content?
+  public CompletionStage<Result> list() {
+    return handler.find().thenApplyAsync(r -> ok(views.html.posts.render(r)));
+  }
+
+/*  // TODO: 03.02.2019 change it, do it really need to return a new page or just updated content?
   public CompletionStage<Result> create() {
     JsonNode json = request().body().asJson();
     final PostResource resource = Json.fromJson(json, PostResource.class);
-    return handler.create(resource).thenApplyAsync(p -> created(post.render(p)), ec.current());
+    return handler.create(resource)
+        .thenApplyAsync(p -> redirect(routes.HomeController.show(p.getId())), ec.current());
+  }*/
+
+  public Result create() {
+    Form<PostResource> postForm = formFactory.form(PostResource.class);
+    return ok(views.html.create_post.render(postForm));
+  }
+
+  public CompletionStage<Result> save() {
+    Form<PostResource> postResourceForm = formFactory.form(PostResource.class)
+        .bindFromRequest(request());
+    return handler.create(postResourceForm.get())
+        .thenApplyAsync(p -> redirect(routes.HomeController.show(p.getId())), ec.current());
   }
 
   public CompletionStage<Result> show(String id) {

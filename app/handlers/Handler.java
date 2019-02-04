@@ -1,7 +1,9 @@
 package handlers;
 
 import data.Repository;
+import java.util.List;
 import java.util.concurrent.CompletionStage;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import model.PostData;
 import model.PostResource;
@@ -38,5 +40,10 @@ public class Handler {
     return repository.create(
         new PostData(Long.parseLong(resource.getId()), resource.getTitle(), resource.getBody()))
         .thenApplyAsync(PostResource::new, ec.current());
+  }
+
+  public CompletionStage<List<PostResource>> find() {
+    return repository.find()
+        .thenApplyAsync(r -> r.map(PostResource::new).collect(Collectors.toList()), ec.current());
   }
 }

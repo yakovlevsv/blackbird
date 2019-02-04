@@ -1,0 +1,16 @@
+@import model.PostResource
+@(posts: List[PostResource])
+<html>
+<head>
+  <title> all posts</title>
+</head>
+<body>
+<h1>posts</h1>
+@for(post <- posts){
+<a href="#">post: @post.getTitle!</a>
+<p>@post.getBody!</p>
+}
+</body>
+</html>
+
+
