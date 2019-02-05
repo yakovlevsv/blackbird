@@ -1,17 +1,10 @@
 @import model.PostResource
 @(posts: List[PostResource])
-<html>
-<head>
-  <title> all posts</title>
-</head>
-<body>
-<h1>posts</h1>
+@main("Posts"){
 @for(post <- posts){
-
 <a href="@routes.HomeController.show(post.getId)">post: @post.getTitle!</a>
 <p>@post.getBody!</p>
 }
-</body>
-</html>
+}
 
 

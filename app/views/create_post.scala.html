@@ -2,20 +2,12 @@
 @import helper._
 @(form: Form[PostResource])
 
-<html>
-<head>
-  <title> Create post</title>
-</head>
-<body>
-<h1>create post</h1>
-
+@main("Create post"){
 @helper.form(action = routes.HomeController.save){
 @helper.inputText(form("title"))
 @helper.inputText(form("body"))
 <input type="submit" value="Create post">
 }
-
-</body>
-</html>
+}
 
 
