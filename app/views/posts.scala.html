@@ -7,7 +7,8 @@
 <body>
 <h1>posts</h1>
 @for(post <- posts){
-<a href="#">post: @post.getTitle!</a>
+
+<a href="@routes.HomeController.show(post.getId)">post: @post.getTitle!</a>
 <p>@post.getBody!</p>
 }
 </body>

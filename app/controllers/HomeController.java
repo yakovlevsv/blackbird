@@ -67,10 +67,26 @@ public class HomeController extends Controller {
     return ok(views.html.create_post.render(postForm));
   }
 
+  public CompletionStage<Result> edit(final String id) {
+    return handler.lookup(id)
+        .thenApplyAsync(
+            r -> ok(views.html.edit_post.render(formFactory.form(PostResource.class).fill(r))),
+            ec.current());
+  }
+
+
   public CompletionStage<Result> save() {
     Form<PostResource> postResourceForm = formFactory.form(PostResource.class)
         .bindFromRequest(request());
     return handler.create(postResourceForm.get())
+        .thenApplyAsync(p -> redirect(routes.HomeController.show(p.getId())), ec.current());
+  }
+
+
+  public CompletionStage<Result> update(String id) {
+    PostResource resource = formFactory.form(PostResource.class).bindFromRequest(request()).get();
+    resource.setId(id);
+    return handler.update(resource)
         .thenApplyAsync(p -> redirect(routes.HomeController.show(p.getId())), ec.current());
   }
 
@@ -83,10 +99,10 @@ public class HomeController extends Controller {
         .thenApplyAsync(result -> result ? ok(id + " removed") : badRequest(id), ec.current());
   }
 
-  // TODO: 03.02.2019  the same question
+ /* // TODO: 03.02.2019  the same question
   public CompletionStage<Result> update() {
     JsonNode json = request().body().asJson();
     final PostResource resource = Json.fromJson(json, PostResource.class);
     return handler.update(resource).thenApplyAsync(p -> ok(post.render(p)), ec.current());
-  }
+  }*/
 }

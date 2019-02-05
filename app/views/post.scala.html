@@ -3,4 +3,5 @@
 @main("Posts") {
 <h1>post title: @pr.getTitle!</h1>
 <h1>post body: @pr.getBody!</h1>
+<a href="@routes.HomeController.edit(pr.getId)">edit</a>
 }

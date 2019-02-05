@@ -1,0 +1,22 @@
+@import model.PostResource
+@import helper._
+@(form: Form[PostResource])
+
+<html>
+<head>
+  <title> Edit post</title>
+</head>
+<body>
+<h1>Edit post</h1>
+<h2>@form("id").value</h2>
+
+@helper.form(action = routes.HomeController.update(form("id").value)){
+@helper.inputText(form("title"))
+@helper.inputText(form("body"))
+<input type="submit" value="Save post">
+}
+
+</body>
+</html>
+
+
