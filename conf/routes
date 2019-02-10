@@ -4,16 +4,16 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
-GET     /hello                      controllers.HomeController.hello(name: String)
-GET     /show                       controllers.HomeController.show(id: String)
-DELETE  /delete                     controllers.HomeController.remove(id: String)
-GET    /create                     controllers.HomeController.create()
+GET     /page/:number               controllers.HomeController.page(number: Integer)
+GET     /post/:id                   controllers.HomeController.show(id: String)
+DELETE  /post/:id                   controllers.HomeController.remove(id: String)
+GET     /create                     controllers.HomeController.create()
 + nocsrf
-POST    /save                     controllers.HomeController.save()
+POST    /save                       controllers.HomeController.save()
 + nocsrf
-POST     /update                     controllers.HomeController.update(id: String)
-GET     /list                       controllers.HomeController.list()
-GET     /edit                       controllers.HomeController.edit(id: String)
+POST     /post/:id                   controllers.HomeController.update(id: String)
+GET     /post/:id/edit              controllers.HomeController.edit(id: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 

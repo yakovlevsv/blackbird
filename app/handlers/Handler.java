@@ -42,8 +42,8 @@ public class Handler {
         .thenApplyAsync(PostResource::new, ec.current());
   }
 
-  public CompletionStage<List<PostResource>> find() {
-    return repository.find()
+  public CompletionStage<List<PostResource>> find(int first , int offset) {
+    return repository.find(first,offset)
         .thenApplyAsync(r -> r.map(PostResource::new).collect(Collectors.toList()), ec.current());
   }
 }

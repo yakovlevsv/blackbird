@@ -2,6 +2,7 @@ package data;
 
 
 import akka.actor.ActorSystem;
+import java.text.MessageFormat;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -36,7 +37,8 @@ public class Repository {
   }
 
   public CompletionStage<PostData> get(long id) {
-    return CompletableFuture.supplyAsync(() -> wrap(em -> em.find(PostData.class, id))); // TODO: 05.02.2019 make it OPTIONAL
+    return CompletableFuture.supplyAsync(
+        () -> wrap(em -> em.find(PostData.class, id))); // TODO: 05.02.2019 make it OPTIONAL
   }
 
   public CompletionStage<Boolean> delete(long id) {
@@ -47,8 +49,10 @@ public class Repository {
     }));
   }
 
-  public CompletionStage<Stream<PostData>> find() {
-    return CompletableFuture.supplyAsync(() -> wrap(
-        em -> em.createQuery("SELECT p FROM PostData p").getResultList().stream()), ec);
+  public CompletionStage<Stream<PostData>> find(int first, int offset) {
+    return CompletableFuture.supplyAsync(() ->
+        wrap(em -> em.createNativeQuery(
+            MessageFormat.format("SELECT * FROM posts offset {0} limit {1}", first, offset),
+            PostData.class).getResultList().stream()), ec);
   }
 }

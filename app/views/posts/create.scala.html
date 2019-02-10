@@ -5,7 +5,7 @@
 @main("Create post"){
 @helper.form(action = routes.HomeController.save){
 @helper.inputText(form("title"))
-@helper.inputText(form("body"))
+@helper.textarea(form("body"))
 <input type="submit" value="Create post">
 }
 }
