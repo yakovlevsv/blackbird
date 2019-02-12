@@ -11,8 +11,13 @@ GET     /create                     controllers.HomeController.create()
 + nocsrf
 POST    /save                       controllers.HomeController.save()
 + nocsrf
-POST     /post/:id                   controllers.HomeController.update(id: String)
+POST     /post/:id                  controllers.HomeController.update(id: String)
 GET     /post/:id/edit              controllers.HomeController.edit(id: String)
++ nocsrf
+POST     /auth                     controllers.HomeController.authenticate()
+GET     /login                     controllers.HomeController.login()
+GET     /logout                     controllers.HomeController.logout()
+
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

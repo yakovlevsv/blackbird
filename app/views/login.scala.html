@@ -1,0 +1,11 @@
+@import model.User
+@import helper._
+@(form: Form[User])
+
+@main("Login"){
+@helper.form(action = routes.HomeController.authenticate){
+@helper.inputText(form("name"))
+@helper.inputText(form("password"))
+<input type="submit" value="Login">
+}
+}
