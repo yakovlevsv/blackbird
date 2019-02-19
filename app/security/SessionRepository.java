@@ -9,7 +9,6 @@ import java.util.Optional;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import model.User;
-import play.Play;
 
 @Singleton
 public class SessionRepository {

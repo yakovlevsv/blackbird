@@ -1,5 +1,5 @@
 @import model.PostResource
-@(resource: PostResource)
+@(resource: PostResource, isAuth: Boolean)
 @main("Posts") {
 <div class="row">
   <div class="col-md-8 blog-main">
@@ -12,8 +12,12 @@
       <p class="blog-post-meta">placeholder for data <a href="#">placeholder for name</a></p>
       <p>@resource.getBody</p>
 
+
     </div><!-- /.blog-post -->
+
+    @if(isAuth){
     <p><a href="@routes.HomeController.edit(resource.getId)">edit</a></p>
+}
   </div>
 
 </div>

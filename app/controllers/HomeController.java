@@ -2,6 +2,7 @@ package controllers;
 
 import com.typesafe.config.Config;
 import handlers.Handler;
+import handlers.SecurityHandler;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 import model.PostResource;
@@ -23,17 +24,19 @@ public class HomeController extends Controller {
   private Config config;
   private Handler handler;
   private FormFactory formFactory;
+  private SecurityHandler security;
 
 
   // TODO: 03.02.2019 exception handling for request without content
   // TODO: 03.02.2019 500 when request for nonexistent post
   @Inject
   public HomeController(HttpExecutionContext ec, Config config, Handler handler,
-      FormFactory formFactory) {
+      FormFactory formFactory, SecurityHandler security) {
     this.ec = ec;
     this.config = config;
     this.handler = handler;
     this.formFactory = formFactory;
+    this.security = security;
   }
 
   public CompletionStage<Result> index() {
@@ -50,7 +53,6 @@ public class HomeController extends Controller {
   @Security.Authenticated(Secured.class)
   public Result create() {
     Form<PostResource> postForm = formFactory.form(PostResource.class);
-
     return ok(views.html.posts.create.render(postForm));
   }
 
@@ -80,7 +82,7 @@ public class HomeController extends Controller {
 
   public CompletionStage<Result> show(String id) {
     return handler.lookup(id)
-        .thenApplyAsync(p -> ok(views.html.posts.post.render(p)), ec.current());
+        .thenApplyAsync(p -> ok(views.html.posts.post.render(p, session().get("user")!=null)), ec.current());
   }
 
   @Security.Authenticated(Secured.class)
@@ -95,8 +97,8 @@ public class HomeController extends Controller {
 
   public CompletionStage<Result> authenticate() {
     User user = formFactory.form(User.class).bindFromRequest(request()).get();
-    return handler.login(user).thenApplyAsync(r -> {
-      if (r) {
+    return security.login(user).thenApplyAsync(authenticated -> {
+      if (authenticated) {
         session().put("user", user.getName());
         return redirect(routes.HomeController.index());
       } else {
@@ -106,7 +108,7 @@ public class HomeController extends Controller {
   }
 
   public CompletionStage<Result> logout() {
-    return handler.logout(session("user")).thenApplyAsync(r -> {
+    return security.logout(session("user")).thenApplyAsync(r -> {
       session().clear();
       return redirect(routes.HomeController.index());
     }, ec.current());

@@ -17,15 +17,12 @@ public class Handler {
 
   private Repository repository;
   private HttpExecutionContext ec;
-  private SessionRepository sessionRepository;
   private static final User admin = new User("admin", "password");
 
   @Inject
-  public Handler(Repository repository, HttpExecutionContext ec,
-      SessionRepository sessionRepository) {
+  public Handler(Repository repository, HttpExecutionContext ec) {
     this.repository = repository;
     this.ec = ec;
-    this.sessionRepository = sessionRepository;
   }
 
   public CompletionStage<PostResource> create(PostResource resource) {
@@ -53,21 +50,5 @@ public class Handler {
   public CompletionStage<List<PostResource>> find(int first, int offset) {
     return repository.find(first, offset)
         .thenApplyAsync(r -> r.map(PostResource::new).collect(Collectors.toList()), ec.current());
-  }
-
-  public CompletionStage<Boolean> login(User user) {
-    return CompletableFuture.supplyAsync(
-        () -> {
-          boolean valid = admin.getName().equals(user.getName()) && admin.getPassword()
-              .equals(user.getPassword());
-          sessionRepository.login(user);
-          return valid;
-        });
-  }
-
-  public CompletionStage logout(String user) {
-    return CompletableFuture.runAsync(() -> {
-      sessionRepository.logout(user);
-    });
   }
 }
