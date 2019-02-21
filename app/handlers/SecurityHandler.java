@@ -1,10 +1,6 @@
 package handlers;
 
 import com.typesafe.config.Config;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
@@ -20,14 +16,11 @@ public class SecurityHandler {
   private final User admin;
 
   @Inject
-  public SecurityHandler(SessionRepository sessionRepository, Config config)
-      throws IOException {
+  public SecurityHandler(SessionRepository sessionRepository, Config config) {
     this.sessionRepository = sessionRepository;
-    Properties properties = new Properties();
-    properties.load(new FileInputStream(config.getString("security.config")));
     admin = new User();
-    admin.setName(properties.getProperty("admin.username"));
-    admin.setPassword(properties.getProperty("admin.password"));
+    admin.setName(config.getString("security.users.admin.name"));
+    admin.setPassword(config.getString("security.users.admin.password"));
   }
 
   public CompletionStage<Boolean> login(User user) {
