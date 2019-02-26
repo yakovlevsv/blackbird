@@ -1,0 +1,7 @@
+./liquibase --driver=org.postgresql.Driver \
+     --classpath=/home/yakovlev/prjcts/bbird/blackbird/app/model \
+     --changeLogFile=/home/yakovlev/prjcts/bbird/blackbird/liquibase/changelog.xml \
+     --url="jdbc:postgresql://localhost:5432/blackbird" \
+     --username=user \
+     --password=password \
+     migrate
