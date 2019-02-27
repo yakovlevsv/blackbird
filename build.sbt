@@ -11,6 +11,5 @@ libraryDependencies += guice
 
 libraryDependencies += "org.postgresql" % "postgresql" % "9.4.1212"
 libraryDependencies += "com.zaxxer" % "HikariCP" % "3.3.0"
-libraryDependencies ++= Seq(
-  javaJpa, "org.hibernate" % "hibernate-entitymanager" % "5.4.1.Final")
+libraryDependencies ++= Seq(javaJpa, "org.hibernate" % "hibernate-entitymanager" % "5.4.1.Final")
 PlayKeys.externalizeResources := false

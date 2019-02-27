@@ -58,10 +58,9 @@ public class HomeController extends Controller {
 
   @Security.Authenticated(Secured.class)
   public CompletionStage<Result> edit(final String id) {
-    return handler.lookup(id)
-        .thenApplyAsync(
-            r -> ok(views.html.posts.edit.render(formFactory.form(PostResource.class).fill(r))),
-            ec.current());
+    return handler.lookup(id).thenApplyAsync(
+        r -> ok(views.html.posts.edit.render(formFactory.form(PostResource.class).fill(r))),
+        ec.current());
   }
 
   @Security.Authenticated(Secured.class)
@@ -82,7 +81,8 @@ public class HomeController extends Controller {
 
   public CompletionStage<Result> show(String id) {
     return handler.lookup(id)
-        .thenApplyAsync(p -> ok(views.html.posts.post.render(p, session().get("user")!=null)), ec.current());
+        .thenApplyAsync(p -> ok(views.html.posts.post.render(p, session().get("user") != null)),
+            ec.current());
   }
 
   @Security.Authenticated(Secured.class)
