@@ -6,6 +6,7 @@ import static play.test.Helpers.GET;
 import static play.test.Helpers.POST;
 import static play.test.Helpers.route;
 
+import java.util.HashMap;
 import org.junit.Test;
 import play.Application;
 import play.inject.guice.GuiceApplicationBuilder;
@@ -43,8 +44,17 @@ public class HomeControllerTest extends WithApplication {
 
   @Test
   public void testCreatePost() {
-    Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/save");
+    Http.RequestBuilder login = new Http.RequestBuilder().method(POST).uri("/auth")
+        .bodyForm(new HashMap<String, String>() {{
+          put("name", "test");
+          put("password", "test");
+        }});
+    Http.RequestBuilder request = new Http.RequestBuilder().method(POST).uri("/save")
+        .session(route(app, login).session()).bodyForm(new HashMap<String, String>() {{
+          put("title", "test");
+          put("body", "test");
+        }});
     Result result = route(app, request);
-    assertEquals(Status.FORBIDDEN, result.status());
+    assertEquals(Status.SEE_OTHER, result.status());
   }
 }
