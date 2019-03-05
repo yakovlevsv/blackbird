@@ -3,6 +3,7 @@ package data;
 
 import akka.actor.ActorSystem;
 import java.text.MessageFormat;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
@@ -11,7 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import model.PostData;
-import model.PostResource;
+import play.Logger;
 import play.db.jpa.JPAApi;
 import play.libs.concurrent.CustomExecutionContext;
 
@@ -36,14 +37,13 @@ public class Repository {
     return jpaApi.withTransaction(function);
   }
 
-  public CompletionStage<PostData> get(long id) {
+  public CompletionStage<Optional<PostData>> get(long id) {
     return CompletableFuture.supplyAsync(
-        () -> wrap(em -> em.find(PostData.class, id))); // TODO: 05.02.2019 make it OPTIONAL
+        () -> wrap(em -> Optional.ofNullable(em.find(PostData.class, id))));
   }
 
   public CompletionStage<Boolean> delete(long id) {
     return CompletableFuture.supplyAsync(() -> wrap(em -> {
-      // TODO: 03.02.2019 exception handling
       em.remove(em.find(PostData.class, id));
       return true;
     }));

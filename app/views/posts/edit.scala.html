@@ -3,7 +3,7 @@
 @(form: Form[PostResource])
 
 @main("Edit post"){
-@helper.form(action = routes.HomeController.update(form("id").value)){
+@helper.form(action = routes.PostController.update(form("id").value)){
 @helper.inputText(form("title"))
 @helper.textarea(form("body"))
 <input type="submit" value="Save post">
