@@ -2,15 +2,14 @@ package handlers;
 
 import data.Repository;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
 import model.PostData;
 import model.PostResource;
 import model.User;
+import play.Logger;
 import play.libs.concurrent.HttpExecutionContext;
-import security.SessionRepository;
 
 public class Handler {
 
@@ -33,12 +32,18 @@ public class Handler {
 
   public CompletionStage<PostResource> lookup(String id) {
     return repository.get(Long.parseLong(id))
-        .thenApplyAsync(PostResource::new, ec.current());
+        .thenApplyAsync(r -> new PostResource(r.get()), ec.current()).exceptionally(t -> {
+          Logger.warn("no post with id: {}", id);
+          throw new RuntimeException("No such post " + id);
+        });
   }
 
 
   public CompletionStage<Boolean> remove(String id) {
-    return repository.delete(Long.parseLong(id));
+    return repository.delete(Long.parseLong(id)).exceptionally(t -> {
+      Logger.warn("exception while deleting Post", t);
+      return false;
+    });
   }
 
   public CompletionStage<PostResource> update(PostResource resource) {

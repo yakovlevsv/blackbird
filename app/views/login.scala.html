@@ -3,7 +3,7 @@
 @(form: Form[User])
 
 @main("Login"){
-@helper.form(action = routes.HomeController.authenticate){
+@helper.form(action = routes.AuthController.authenticate){
 @helper.inputText(form("name"))
 @helper.inputPassword(form("password"))
 <input type="submit" value="Login">

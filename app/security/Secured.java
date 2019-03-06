@@ -27,6 +27,6 @@ public class Secured extends Security.Authenticator {
 
   @Override
   public Result onUnauthorized(Http.Context context) {
-    return redirect("/login");
+    return forbidden();
   }
 }
