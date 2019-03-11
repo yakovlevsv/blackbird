@@ -5,6 +5,7 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
 GET     /page/:number               controllers.PostController.page(number: Integer)
+# GET     /pageCount                  controllers.PostController.pageCount()
 GET     /post/:id                   controllers.PostController.show(id: String)
 DELETE  /post/:id                   controllers.PostController.remove(id: String)
 GET     /create                     controllers.PostController.create()

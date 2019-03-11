@@ -1,5 +1,6 @@
 package handlers;
 
+import com.typesafe.config.Config;
 import data.Repository;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -7,20 +8,19 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import model.PostData;
 import model.PostResource;
-import model.User;
 import play.Logger;
 import play.libs.concurrent.HttpExecutionContext;
 
 public class Handler {
 
-
   private Repository repository;
   private HttpExecutionContext ec;
-  private static final User admin = new User("admin", "password");
+  private Config config;
 
   @Inject
-  public Handler(Repository repository, HttpExecutionContext ec) {
+  public Handler(Repository repository, Config config, HttpExecutionContext ec) {
     this.repository = repository;
+    this.config = config;
     this.ec = ec;
   }
 
@@ -38,7 +38,6 @@ public class Handler {
         });
   }
 
-
   public CompletionStage<Boolean> remove(String id) {
     return repository.delete(Long.parseLong(id)).exceptionally(t -> {
       Logger.warn("exception while deleting Post", t);
@@ -52,8 +51,13 @@ public class Handler {
         .thenApplyAsync(PostResource::new, ec.current());
   }
 
-  public CompletionStage<List<PostResource>> find(int first, int offset) {
-    return repository.find(first, offset)
+  public CompletionStage<List<PostResource>> preparePage(int number) {
+    int size = config.getInt("app.postsPerPage");
+    return repository.find(size * number < 1 ? 0 : (number - 1), size)
         .thenApplyAsync(r -> r.map(PostResource::new).collect(Collectors.toList()), ec.current());
+  }
+
+  public CompletionStage<Integer> getPageCount() {
+    return repository.getPostCount().thenApply(r -> r / config.getInt("app.postsPerPage"));
   }
 }

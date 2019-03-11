@@ -1,6 +1,5 @@
 package controllers;
 
-import com.typesafe.config.Config;
 import handlers.Handler;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
@@ -18,22 +17,18 @@ public class PostController extends Controller {
   private HttpExecutionContext ec;
   private FormFactory formFactory;
 
-  private Config config;
   private Handler handler;
 
   @Inject
-  public PostController(HttpExecutionContext ec, FormFactory formFactory, Config config,
-      Handler handler) {
+  public PostController(HttpExecutionContext ec, FormFactory formFactory, Handler handler) {
     this.ec = ec;
     this.formFactory = formFactory;
-    this.config = config;
     this.handler = handler;
   }
 
   public CompletionStage<Result> page(Integer number) {
-    int size = config.getInt("app.postsPerPage");
-    return handler.find(size * number < 1 ? 0 : (number - 1), size)
-        .thenApplyAsync(r -> ok(views.html.posts.list.render(r)));
+    return handler.getPageCount().thenCombineAsync(handler.preparePage(number),
+        (p,r) -> ok(views.html.posts.list.render(r, number , p)));
   }
 
   @Security.Authenticated(Secured.class)
@@ -76,6 +71,4 @@ public class PostController extends Controller {
     return handler.remove(id)
         .thenApplyAsync(result -> result ? ok(id + " removed") : badRequest(id), ec.current());
   }
-
-
 }

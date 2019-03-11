@@ -1,0 +1,30 @@
+@(page: Integer, pageCount: Integer)
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-center">
+    @if(page<=1){
+    <li class="page-item disabled">
+      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(1)">1</a></li>
+    </li>
+    }else if( page >=pageCount){
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(page)">@page</a>
+    </li>
+    <li class="page-item" disabled>
+      <a class="page-link" href="#">Next</a>
+    </li>
+    } else {
+    <li class="page-item">
+      <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(1)">1</a></li>
+    </li>
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(page-1)">@page-1</a></li>
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(page)">@page</a>
+    </li>
+    <li class="page-item"><a class="page-link" href="@routes.PostController.page(page+1)">@page+1</a>
+    </li>
+    <li class="page-item">
+      <a class="page-link" href="#">Next</a>
+    </li>
+    }
+  </ul>
+</nav>
