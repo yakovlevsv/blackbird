@@ -58,6 +58,7 @@ public class Handler {
   }
 
   public CompletionStage<Integer> getPageCount() {
-    return repository.getPostCount().thenApply(r -> r / config.getInt("app.postsPerPage"));
+     return repository.getPostCount()
+        .thenApply(r -> (int) Math.ceil(r / config.getDouble("app.postsPerPage")));
   }
 }

@@ -56,12 +56,12 @@ public class Repository {
             PostData.class).getResultList().stream()), ec);
   }
 
-  public CompletionStage<Integer> getPostCount() {
+  public CompletionStage<Double> getPostCount() {
     return CompletableFuture.supplyAsync(() ->
         wrap(em -> ((BigInteger)em.createNativeQuery(
             // TODO: 11.03.19 change later to enhance query speed
            // "SELECT reltuples::BIGINT AS estimate FROM pg_class WHERE relname='table_name';")
             "SELECT count(*) from posts;")
-            .getSingleResult()).intValue()), ec);
+            .getSingleResult()).doubleValue()), ec);
   }
 }
