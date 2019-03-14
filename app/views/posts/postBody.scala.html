@@ -1,0 +1,7 @@
+@import model.PostResource
+@(post: PostResource)
+<p>
+  @for(block<-post.getBody.split("\r\n")){ @block <br> }
+</p>
+
+
