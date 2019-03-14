@@ -2,6 +2,7 @@ package data;
 
 
 import akka.actor.ActorSystem;
+import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -12,7 +13,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.persistence.EntityManager;
 import model.PostData;
-import play.Logger;
 import play.db.jpa.JPAApi;
 import play.libs.concurrent.CustomExecutionContext;
 
@@ -54,5 +54,14 @@ public class Repository {
         wrap(em -> em.createNativeQuery(
             MessageFormat.format("SELECT * FROM posts offset {0} limit {1}", first, offset),
             PostData.class).getResultList().stream()), ec);
+  }
+
+  public CompletionStage<Double> getPostCount() {
+    return CompletableFuture.supplyAsync(() ->
+        wrap(em -> ((BigInteger)em.createNativeQuery(
+            // TODO: 11.03.19 change later to enhance query speed
+           // "SELECT reltuples::BIGINT AS estimate FROM pg_class WHERE relname='table_name';")
+            "SELECT count(*) from posts;")
+            .getSingleResult()).doubleValue()), ec);
   }
 }

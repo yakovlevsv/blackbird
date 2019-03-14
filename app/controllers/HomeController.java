@@ -22,9 +22,7 @@ public class HomeController extends Controller {
   }
 
   public CompletionStage<Result> index() {
-    return handler.find(0, config.getInt("app.postsPerPage"))
-        .thenApplyAsync(r -> ok(views.html.index.render(r)));
+    return handler.getPageCount().thenCombineAsync(handler.preparePage(1),
+        (p, r) -> ok(views.html.index.render(r, p)));
   }
-
-
 }
