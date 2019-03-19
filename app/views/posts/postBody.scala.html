@@ -1,7 +1,16 @@
 @import model.PostResource
+@import org.commonmark.node.Node
+@import org.commonmark.parser.Parser
+@import org.commonmark.renderer.html.HtmlRenderer
+
 @(post: PostResource)
 <p>
-  @for(block<-post.getBody.split("\r\n")){ @block <br> }
+  @{
+  val parser:Parser = Parser.builder().build();
+  val document:Node = parser.parse(post.getBody);
+  val renderer:HtmlRenderer = HtmlRenderer.builder().build();
+  Html(renderer.render(document))
+  }
 </p>
 
 

@@ -54,7 +54,13 @@ public class Handler {
   public CompletionStage<List<PostResource>> preparePage(int number) {
     int size = config.getInt("app.postsPerPage");
     return repository.find(size * number < 1 ? 0 : (number - 1), size)
-        .thenApplyAsync(r -> r.map(PostResource::new).collect(Collectors.toList()), ec.current());
+        .thenApplyAsync(r -> r.map(PostResource::new)
+            .peek(p -> {
+              int textSize = config.getInt("app.post.preview.length");
+              p.setBody(p.getBody()
+                  .substring(0, p.getBody().length() > textSize ? textSize : p.getBody().length()));
+            })
+            .collect(Collectors.toList()), ec.current());
   }
 
   public CompletionStage<Integer> getPageCount() {
