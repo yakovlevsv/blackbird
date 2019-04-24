@@ -19,7 +19,7 @@
         <a class="text-dark" href="@routes.PostController.show(post.getId)">@post.getTitle</a>
       </h3>
       <div class="mb-1 text-muted">Nov 12 date Placeholder</div>
-      <p class="card-text mb-auto">@post.getBody</p>
+      @views.html.posts.postBody(post)
       <a href="@routes.PostController.show(post.getId)">Continue reading</a>
     </div>
   </div>
